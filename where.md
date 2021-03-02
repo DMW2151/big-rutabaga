@@ -12,7 +12,13 @@ permalink: /
   - [DB Design With PostgeSQL](https://www.codecademy.com/learn/paths/design-databases-with-postgresql)
   - [Statistics With Python](https://www.codecademy.com/learn/paths/master-statistics-with-python)
 
+--------
+
 ## What I'm Working On
+
+Most of the below is at least in part inspired by something I've read recently, see some of my [favorites](/big-rutabaga/read).
+
+--------
 
 ### 2020
 
