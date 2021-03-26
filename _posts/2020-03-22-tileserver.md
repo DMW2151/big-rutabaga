@@ -16,7 +16,7 @@ A few weeks ago I attended an OpenData NYC event that asked participants to hack
 
 This is all great, but my interest (and what has consumed a good chunk of my last few evenings) is in how to serve slippy map tiles in a way that makes a really enjoyable map experience. During the event, we elected to display two layers (three if `*.png` basemaps count).
 
-The first layer would serve all NYC sidewalks (downloaded from: [NYC Open Data Portal](https://data.cityofnewyork.us/City-Government/NYC-Street-Centerline-CSCL-/exjm-f27b),see also [metadata](https://github.com/CityOfNewYork/nyc-geo-metadata/blob/master/Metadata/Metadata_StreetCenterline.md)) and we'd take a traditional approach for this layer. Typically, when one creates a tileserver they either serve tiles from a directory system or from an `*.mbtiles` file that contains all pre-calculated tiles. In either case, any tile can be accessed by looking up a unique `x`, `y`, `z` value where `z`, represents a zoom level, and `x`, and `y` represent a location on Earth. The advantage of having these tiles pre-generated is that when user's make a request, the server simply need to access the tile stored at the corrseponding `XYZ` value rather than doing any calculation on the fly.
+The first layer would serve all NYC sidewalks (downloaded from: [NYC Open Data Portal](https://data.cityofnewyork.us/City-Government/NYC-Street-Centerline-CSCL-/exjm-f27b),see also [metadata](https://github.com/CityOfNewYork/nyc-geo-metadata/blob/master/Metadata/Metadata_StreetCenterline.md)) and we'd take a traditional approach for this layer. Typically, when one creates a tileserver they either serve tiles from a directory system or from an `*.mbtiles` file that contains all pre-calculated tiles. In either case, any tile can be accessed by looking up a unique `x`, `y`, `z` value where `z`, represents a zoom level, and `x`, and `y` represent a location on Earth. The advantage of having these tiles pre-generated is that when user's make a request, the server simply need to access the tile stored at the corresponding `XYZ` value rather than doing any calculation on the fly.
 
 I wrote a short script that used [Tippecanoe](https://github.com/mapbox/tippecanoe) to convert files from `*.geojson` to `*.mbtiles`. This is great, but there is the upfront cost of storing the same feature at different zoom levels, finding the right Tippecanoe configuration for each layer or datasource, and then running the tile generation before being able to serve tiles.
 
@@ -31,7 +31,7 @@ For user generated events, we'd serve these directly from a database. This is a 
 >Therefore, if your data does not very change quickly I would almost always suggest using preprocessing over dynamic rendering of tiles. You might spend more effort >maintaining something than you expect if you start using PostGIS to create tiles on demand over existing tiling tools.
 >
 
-However, in our case the data did change quite often, we didn't expect that much traffic, and the rendered polygons would be a few points, not complex catchement areas, so Taking inspiration from this [toy tileserver](https://blog.crunchydata.com/blog/dynamic-vector-tiles-from-postgis), we ran a flask api that simply queried `PostGIS` to generate tiles on the fly.
+However, in our case the data did change quite often, we didn't expect that much traffic, and the rendered polygons would be a few points, not complex catchment areas, so Taking inspiration from this [toy tileserver](https://blog.crunchydata.com/blog/dynamic-vector-tiles-from-postgis), we ran a flask api that simply queried `PostGIS` to generate tiles on the fly.
 
 ## Serving Tiles! - Beyond
 
@@ -50,7 +50,7 @@ Although explicitly discouraged, I was curious how much I could push a tiny serv
 
 The code for this project is [here](), but I'll briefly go into some of the tricks used to accomplish the third goal listed above. It seems that at least in this setup, the database is the limiting factor (there's also not much room to change the knobs given the size of the instance, but perhaps on a more robust machine the DB config could be modified to improve this performance without tricks).
 
-I loaded in data from a sample file (all blocks in New York State) into the DB with the following script. Next, I stood up a simple frontend using [OpenlayersJS](https://www.google.com/search?client=firefox-b-1-d&q=openlayers) and sent some requests to my weberver. Querying `blocks` was feasible, but the performance was a bit clunky.
+I loaded in data from a sample file (all blocks in New York State) into the DB with the following script. Next, I stood up a simple frontend using [OpenlayersJS](https://www.google.com/search?client=firefox-b-1-d&q=openlayers) and sent some requests to my webserver. Querying `blocks` was feasible, but the performance was a bit clunky.
 
 ```bash
 # Download 190MB -> Unzip 600MB
@@ -70,7 +70,7 @@ ogr2ogr -overwrite \
 
 There was room to improve the performance of the query I was using. I was routinely seeing request times of ~200ms on the db to generate a tile. This could be improved with an instance with better CPU and working memory, or a simpler query. I elected to create a pseudo-topological model of each geometry to help keep query speed high and tile size low.
 
-Each block/blockgroup in the dataset contains a polygon, adjacent polygons intersect on their shared edge, but the server returns the common edge twice. If I decompose the shape to edges, drop shared edges, and then only return relevant edges instead of entire geometries, the responses could be up to 50% smaller. Furthermore, this procedure allows for simplifying lines in a way that does not cause gaps. In effect, it is a laymen's implementation of the POSTGIS Topology module's [recommendation](https://trac.osgeo.org/postgis/wiki/UsersWikiSimplifyPreserveTopology) for simplifying adjacent shapes.
+Each block/blockgroup in the data contains a polygon, adjacent polygons intersect on their shared edge, but the server returns the common edge twice. If I decompose the shape to edges, drop shared edges, and then only return relevant edges instead of entire geometries, the responses could be up to 50% smaller. Furthermore, this procedure allows for simplifying lines in a way that does not cause gaps. In effect, it is a layman's implementation of the PostGIS Topology module's [recommendation](https://trac.osgeo.org/postgis/wiki/UsersWikiSimplifyPreserveTopology) for simplifying adjacent shapes.
 
 To get this effect, I ran the following on each table in the DB. Note that the below ignores exterior edges or data associated with each edge (this can be easily included w. small modifications)
 
@@ -97,7 +97,7 @@ src_db_1            89.56%
 ```
 
 From there, stuck the following query behind my only API endpoint and modified the query to simplify shapes slightly where possible. The logic in the endpoint converted the `XYZ` coordinates to the bounds of an envelope (args: $1, $2, $3, $4)
-and I modified the st_segmentize and st_simplify params a bit until I was happy with the values.
+and I modified the `st_segmentize` and `st_simplify` params a bit until I was happy with the values.
 
 ```SQL
 WITH mvtgeom as (
@@ -123,9 +123,9 @@ WITH mvtgeom as (
     SELECT ST_AsMVT(mvtgeom.*) as pbf FROM mvtgeom;
 ```
 
-With proper indexing, caching, gzipping, etc. I was able to get performance I was quite happy with. Even without the cache activated, with I was back down to seing very satisfactory 50ms responses from the DB. There are a few outstanding issues.
+With proper indexing, caching, gzipping, etc. I was able to get performance I was quite happy with. Even without the cache activated, with I was back down to seeing very satisfactory <100ms responses from the DB. There are a few outstanding issues.
 
-1. Tile size is unbounded, unless controlled for by the front end, zooming too far out will return tiles >500kb (the recommended tile size max is ~50kb) and the reauest will take >1s.
+1. Tile size is unbounded, unless controlled for by the front end, zooming too far out will return tiles >500kb (the recommended tile size max is ~50kb) and the request will take >1s.
 
 2. Something looks a bit off in the projection. The standard for Web-Mercator and general WGS is not the same coordinate system, perhaps I missed a transform somewhere.
 
