@@ -6,7 +6,7 @@ permalink: /posts/private-docker
 ---
 
 
-I was interested in setting up a private Docker registry for at least two reasons. 
+I was interested in setting up a private Docker registry for at least two reasons.
 
 - I've accumulated, and subsequently lost track of, quite a few custom images. Maybe following a proper `build`, `tag`, `push/pull` flow workflow could end up saving me time in the long run.
 

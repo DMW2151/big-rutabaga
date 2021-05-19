@@ -22,6 +22,8 @@ Most of the below is at least in part inspired by something I've read recently, 
 
 ### 2021
 
+- **2021-04-06** - [Geospatial Processing on AWS Lambda](/big-rutabaga/posts/geo-lambda-1) - Testing out the new Docker Containers Image support for AWS Lambda, then learning a lot more about how to write slim layers.
+  
 - **2021-03-22** - [Rolled My Own Tileserver Against Better Judgement](/big-rutabaga/posts/tileserver-1) - You're not supposed to serve tiles directly from a DB.
 
 - **2021-03-17** - [Accidentally Learned A lot About Jupyter Notebooks](/big-rutabaga/posts/datadive) - I spent the weekend working using *~AI for Social Good~*. Results on that front were under-whelming, but I learned quite a bit about deploying a JupyterHub instance.
