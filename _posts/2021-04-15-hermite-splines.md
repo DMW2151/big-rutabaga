@@ -5,7 +5,12 @@ date:   2020-03-24 22:47:53 -0500
 permalink: /posts/hermite-splines
 ---
 
-Last week I learned some new words. Turns out there's a term for the ubiquitous illustration style that features sloping, misproportioned illustrations of people in meetings, driving, biking, climbing rocks, planting flags, piloting rockets, etc. Behold, Corporate Memphis! Looking at all these startup ads got me curious and within 20 minutes I was looking into how to procedurally draw smooth, random, curves.
+![Memphis!](https://eyeondesign.aiga.org/wp-content/uploads/2019/08/Algeria_InLine_1.jpg)
+<sup>Image by Xoanna Herrera for Facebook Illustrations System; 
+See [article](https://eyeondesign.aiga.org/dont-worry-these-gangley-armed-cartoons-are-here-to-protect-you-from-big-tech/<br>) And check out the artist's [work](https://www.xoanaherrera.com/).
+</sup>
+
+Last week I learned some new words. Turns out there's a term for the ubiquitous illustration style that features sloping, misproportioned illustrations of people in meetings, driving, biking, climbing rocks, planting flags, piloting rockets, etc. Behold, [Corporate Memphis](https://en.wikipedia.org/wiki/Corporate_Memphis)! Looking at all these startup ads got me curious and within 20 minutes I was looking into how to procedurally draw smooth, random, curves.
 
 I learned there are a lot of ways to draw a curve, but in short, you don't want a 27th degree polynomial between dots, nor do you want a child's connect the dot's situation. I found myself reading this article on [cubic hermite splines](https://en.wikipedia.org/wiki/Cubic_Hermite_spline) &mdash; this seems to meet a nice balance, each segment matches it's neighbors segments in location (e.g. `segment_1(x_1)` == `segment_2(x_1)`) and derivative (`d_segment_1(x_1)` = `d_segment_2(x_1)`). That's what I sent out to implement this afternoon.
 
@@ -17,7 +22,7 @@ And for some giggles, let's do it in Julia. Performance is a bit lacking, I'm fa
 2.360 ms (20881 allocations: 5.29 MiB)
 ```
 
-![Result](./big-rutabaga/diagrams/result.png)
+![Result](/big-rutabaga/diagrams/result.png)
 
 Cool, so we get some wonky lines. That'll do, solid day's work. I also did a lot of trying to derive the formulas for Nth degree random polynomials where the point, first derivative, and second derivative are the same. Not worth it at all, glad that I tried it, but this was a cool afternoon exercise. Code's below.
 
@@ -60,3 +65,4 @@ end
 
 * [Splines](https://people.cs.clemson.edu/~dhouse/courses/405/notes/splines.pdf)
 * [Hermite Spline Interpolation](https://www.youtube.com/watch?v=p49NFtgEuNs)
+* [Memphis!](https://eyeondesign.aiga.org/dont-worry-these-gangley-armed-cartoons-are-here-to-protect-you-from-big-tech/)
