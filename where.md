@@ -22,7 +22,7 @@ Most of the below is at least in part inspired by something I've read recently, 
 
 ### 2021
 
-- **2021-04-15** - [Took a derivative for the first time in years](/big-rutabaga/posts/hermite-splines) - Quick afternoon project to make random lines, mostly recalling facts from classes I took years ago. Greasing the Julia wheels, too.
+- **2021-04-15** - [Took a Derivative for the First Time in Years](/big-rutabaga/posts/hermite-splines) - Quick afternoon project to make random lines, mostly recalling facts from classes I took years ago. Greasing the Julia wheels, too.
 
 - **2021-04-06** - [Geospatial Processing on AWS Lambda](/big-rutabaga/posts/geo-lambda-1) - Testing out the new Docker Containers Image support for AWS Lambda, then learning a lot more about how to write slim layers.
   
